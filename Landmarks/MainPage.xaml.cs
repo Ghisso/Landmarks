@@ -15,6 +15,7 @@ using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Essentials;
 using Plugin.InputKit;
+using System.Threading;
 
 namespace Landmarks
 {
@@ -23,9 +24,24 @@ namespace Landmarks
     [DesignTimeVisible(true)]
     public partial class MainPage : ContentPage
     {
+
+        CancellationTokenSource cts;
+
+
         public MainPage()
         {
             InitializeComponent();
+        }
+
+
+        public void CancelSpeech()
+        {
+            if (cts == null)
+                return;
+            if (cts?.IsCancellationRequested ?? false)
+                return;
+
+            cts.Cancel();
         }
 
 
@@ -53,6 +69,7 @@ namespace Landmarks
 
         async void ButtonTakeImageClicked(object sender, System.EventArgs e)
         {
+            CancelSpeech();
             var stopwatch = new Stopwatch();
             Landmark landmark;
             var cameraStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
@@ -96,7 +113,7 @@ namespace Landmarks
                 });
                 stopwatch.Start();
                 landmark = await AnalyzeImage(fileStream);
-                landmark.Description = $"Description of {landmark.Name}";
+                landmark.Description = string.Concat(Enumerable.Repeat($"Description of {landmark.Name} ", 5));
                 stopwatch.Stop();
             }
 
@@ -105,7 +122,8 @@ namespace Landmarks
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
             if (CheckBoxText2Speech.IsChecked)
             {
-                await TextToSpeech.SpeakAsync(landmark.Description);
+                cts = new CancellationTokenSource();
+                await TextToSpeech.SpeakAsync(landmark.Description, cancelToken: cts.Token);
             }
         }
     }
