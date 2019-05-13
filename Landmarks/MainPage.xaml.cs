@@ -13,6 +13,8 @@ using Plugin.Media.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
+using Xamarin.Essentials;
+using Plugin.InputKit;
 
 namespace Landmarks
 {
@@ -37,27 +39,24 @@ namespace Landmarks
         }
 
 
-        public static async Task<string> AnalyzeImage(Stream stream)
+        public static async Task<Landmark> AnalyzeImage(Stream stream)
         {
             var client = new HttpClient();
             var imageArray = ReadFully(stream);
             string imageData = Convert.ToBase64String(imageArray);
             string json = JsonConvert.SerializeObject(imageData);
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
             var response = await client.PostAsync("https://testingghisso.azurewebsites.net/api/landmarks", new StringContent(json, Encoding.UTF8, "application/json"));
             var replyBody = await response.Content.ReadAsStringAsync();
             var landmark = JsonConvert.DeserializeObject<Landmark>(replyBody);
-            stopwatch.Stop();
-            Console.WriteLine(landmark?.Name);
-            Console.WriteLine($"Excecution time was {stopwatch.ElapsedMilliseconds} milliseconds.");
-            return landmark?.Name;
+            return landmark;
         }
 
         async void ButtonTakeImageClicked(object sender, System.EventArgs e)
         {
-            //var cameraStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
-            //var storageStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
+            var stopwatch = new Stopwatch();
+            Landmark landmark;
+            var cameraStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
+            var storageStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
 
             //if (cameraStatus != PermissionStatus.Granted || storageStatus != PermissionStatus.Granted)
             //{
@@ -66,45 +65,48 @@ namespace Landmarks
             //    storageStatus = results[Permission.Storage];
             //}
 
-            //if (cameraStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted)
-            //{
-            //    //var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
-            //    //{
-            //    //    Directory = "Sample",
-            //    //    Name = "test.jpg"
-            //    //});
-            //    var client = new HttpClient();
-            //    var response = await client.GetAsync("https://www.wondermondo.com/wp-content/uploads/2017/10/Sphinx.jpg");
-            //    var fileStream = await response.Content.ReadAsStreamAsync();
-
-            //    ImageTaken.Source = ImageSource.FromStream(() =>
-            //    {
-            //        return fileStream;
-            //    });
-            //    var description = await AnalyzeImage(fileStream);
-            //    EditorDescription.Text = description;
-            //}
-            //else
-            //{
-            //    await DisplayAlert("Permissions Denied", "Unable to take photos.", "OK");
-            //}
-
-
-            var stopwatch = new Stopwatch();
-            var client = new HttpClient();
-            var response = await client.GetAsync("https://www.wondermondo.com/wp-content/uploads/2017/10/Sphinx.jpg");
-            var fileStream = await response.Content.ReadAsStreamAsync();
-            fileStream.Position = 0;
-            var stream = await response.Content.ReadAsStreamAsync();
-            ImageTaken.Source = ImageSource.FromStream(() =>
+            if (cameraStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted)
             {
-                return stream;
-            });
-            stopwatch.Start();
-            var description = await AnalyzeImage(fileStream);
-            stopwatch.Stop();
-            EditorDescription.Text = description;
+                var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+                {
+                    Directory = "Sample",
+                    Name = "test.jpg"
+                });
+
+                ImageTaken.Source = ImageSource.FromStream(() =>
+                {
+                    var stream = file.GetStream();
+                    return stream;
+                });
+                stopwatch.Start();
+                landmark = await AnalyzeImage(file.GetStream());
+                landmark.Description = $"Description of {landmark.Name}";
+                stopwatch.Stop();
+            }
+            else
+            {
+                var client = new HttpClient();
+                var response = await client.GetAsync("https://www.wondermondo.com/wp-content/uploads/2017/10/Sphinx.jpg");
+                var fileStream = await response.Content.ReadAsStreamAsync();
+                fileStream.Position = 0;
+                var stream = await response.Content.ReadAsStreamAsync();
+                ImageTaken.Source = ImageSource.FromStream(() =>
+                {
+                    return stream;
+                });
+                stopwatch.Start();
+                landmark = await AnalyzeImage(fileStream);
+                landmark.Description = $"Description of {landmark.Name}";
+                stopwatch.Stop();
+            }
+
+            EntryLandmarkName.Text = landmark.Name;
+            EditorLandmarkDescription.Text = landmark.Description;
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
+            if (CheckBoxText2Speech.IsChecked)
+            {
+                await TextToSpeech.SpeakAsync(landmark.Description);
+            }
         }
     }
 }

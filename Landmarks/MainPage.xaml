@@ -4,13 +4,18 @@
              xmlns:local="clr-namespace:Landmarks"
              x:Class="Landmarks.MainPage"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
-             ios:Page.UseSafeArea="true">
+             ios:Page.UseSafeArea="true"
+             xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit">
     <StackLayout>
         <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
         <Button x:Name="ButtonTakeImage" Clicked="ButtonTakeImageClicked"
                 Text="Take Image"/>
-        <Editor x:Name="EditorDescription" IsReadOnly="true" Placeholder="Waiting for description"
+        <input:CheckBox x:Name="CheckBoxText2Speech" Text="Text-to-speech" Type="Check" />
+        <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Waiting for name"
+               PlaceholderColor="Olive"/>
+        <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Waiting for description"
                 PlaceholderColor="Olive" AutoSize="TextChanges"/>
-        <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" />
+        <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
+               PlaceholderColor="Olive"/>
     </StackLayout>
 </ContentPage>
