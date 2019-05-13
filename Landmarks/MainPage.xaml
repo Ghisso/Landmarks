@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:Landmarks" x:Class="Landmarks.MainPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Landmarks"
+             x:Class="Landmarks.MainPage"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true">
     <StackLayout>
-        <!-- Place new controls here -->
+        <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
         <Button x:Name="ButtonTakeImage" Clicked="ButtonTakeImageClicked"
                 Text="Take Image"/>
         <Editor x:Name="EditorDescription" IsReadOnly="true" Placeholder="Waiting for description"
                 PlaceholderColor="Olive" AutoSize="TextChanges"/>
         <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" />
-        <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/> 
     </StackLayout>
 </ContentPage>
