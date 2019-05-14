@@ -24,8 +24,8 @@ namespace Landmarks
     [DesignTimeVisible(true)]
     public partial class MainPage : ContentPage
     {
-
         CancellationTokenSource cts;
+        private static readonly HttpClient client = new HttpClient();
 
 
         public MainPage()
@@ -57,7 +57,6 @@ namespace Landmarks
 
         public static async Task<Landmark> AnalyzeImage(Stream stream)
         {
-            var client = new HttpClient();
             var imageArray = ReadFully(stream);
             string imageData = Convert.ToBase64String(imageArray);
             string json = JsonConvert.SerializeObject(imageData);
@@ -102,7 +101,6 @@ namespace Landmarks
             }
             else
             {
-                var client = new HttpClient();
                 var response = await client.GetAsync("https://www.wondermondo.com/wp-content/uploads/2017/10/Sphinx.jpg");
                 var fileStream = await response.Content.ReadAsStreamAsync();
                 fileStream.Position = 0;
@@ -122,8 +120,16 @@ namespace Landmarks
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
             if (CheckBoxText2Speech.IsChecked)
             {
+                var locales = await TextToSpeech.GetLocalesAsync();
+                var locale = locales.Last();
+                var settings = new SpeechOptions()
+                {
+                    Volume = .75f,
+                    Pitch = 1.0f,
+                    Locale = locale
+                };
                 cts = new CancellationTokenSource();
-                await TextToSpeech.SpeakAsync(landmark.Description, cancelToken: cts.Token);
+                await TextToSpeech.SpeakAsync(landmark.Description, settings, cts.Token);
             }
         }
     }
