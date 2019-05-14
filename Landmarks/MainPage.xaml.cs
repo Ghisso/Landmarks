@@ -27,7 +27,7 @@ namespace Landmarks
         CancellationTokenSource cts;
         private static readonly HttpClient client = new HttpClient();
         private static readonly string url = "https://japaneast.api.cognitive.microsoft.com/customvision/v3.0/Prediction/76f0d893-7cda-4625-90ec-8470bd025024/classify/iterations/TestIteration/image";
-
+        IEnumerable<Locale> locales;
 
         public MainPage()
         {
@@ -35,6 +35,20 @@ namespace Landmarks
             client.DefaultRequestHeaders.Add("Prediction-Key", "c7b31743df8a4b599690ec34bf7dd568");
         }
 
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            if (locales == null)
+            {
+                locales = await TextToSpeech.GetLocalesAsync();
+            }
+        }
+
+        public async Task<List<Locale>> GetLocales()
+        {
+            var l = await TextToSpeech.GetLocalesAsync();
+            return l.ToList();
+        }
 
         public void CancelSpeech()
         {
@@ -125,13 +139,13 @@ namespace Landmarks
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
             if (CheckBoxText2Speech.IsChecked)
             {
-                var locales = await TextToSpeech.GetLocalesAsync();
+
                 var locale = locales.Last();
                 var settings = new SpeechOptions()
                 {
-                    Volume = .75f,
+                    Volume = Preferences.Get("Volume", 1.0f)/100,
                     Pitch = 1.0f,
-                    Locale = locale
+                    Locale = locales.ElementAt(Preferences.Get("Locale", 0))
                 };
                 cts = new CancellationTokenSource();
                 await TextToSpeech.SpeakAsync(landmark.Description, settings, cts.Token);

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Landmarks.SettingsPage"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
+             xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit"
+             Visual="Material">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Settings" HorizontalOptions="Center" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Text="Volume" Grid.Row="0" Grid.Column="0" HorizontalOptions="Center" />
+                <Slider x:Name="SliderVolume" Maximum="100" Minimum="0" Grid.Row="0" Grid.Column="1" />
+                <Label Text="Locale" Grid.Row="1" Grid.Column="0" HorizontalOptions="Center" />
+                <Picker x:Name="PickerLocales" Grid.Row="1" Grid.Column="1" />
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
