@@ -26,11 +26,13 @@ namespace Landmarks
     {
         CancellationTokenSource cts;
         private static readonly HttpClient client = new HttpClient();
+        private static readonly string url = "https://japaneast.api.cognitive.microsoft.com/customvision/v3.0/Prediction/76f0d893-7cda-4625-90ec-8470bd025024/classify/iterations/TestIteration/image";
 
 
         public MainPage()
         {
             InitializeComponent();
+            client.DefaultRequestHeaders.Add("Prediction-Key", "c7b31743df8a4b599690ec34bf7dd568");
         }
 
 
@@ -58,11 +60,14 @@ namespace Landmarks
         public static async Task<Landmark> AnalyzeImage(Stream stream)
         {
             var imageArray = ReadFully(stream);
-            string imageData = Convert.ToBase64String(imageArray);
-            string json = JsonConvert.SerializeObject(imageData);
-            var response = await client.PostAsync("https://testingghisso.azurewebsites.net/api/landmarks", new StringContent(json, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(url, new ByteArrayContent(imageArray));
             var replyBody = await response.Content.ReadAsStringAsync();
-            var landmark = JsonConvert.DeserializeObject<Landmark>(replyBody);
+            var result = JsonConvert.DeserializeObject<Result>(replyBody);
+            var landmark = new Landmark()
+            {
+                Name = result.Predictions[0].TagName,
+                Confidence = result.Predictions[0].Probability
+            };
             return landmark;
         }
 
@@ -101,7 +106,7 @@ namespace Landmarks
             }
             else
             {
-                var response = await client.GetAsync("https://www.wondermondo.com/wp-content/uploads/2017/10/Sphinx.jpg");
+                var response = await client.GetAsync("https://s27363.pcdn.co/wp-content/uploads/2017/03/Himeji-Castle-Japan-1163x775.jpg.optimal.jpg");
                 var fileStream = await response.Content.ReadAsStreamAsync();
                 fileStream.Position = 0;
                 var stream = await response.Content.ReadAsStreamAsync();
