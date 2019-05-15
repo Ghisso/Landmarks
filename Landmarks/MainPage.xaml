@@ -6,16 +6,18 @@
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
              Visual="Material">
-    <StackLayout>
-        <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
-        <Button x:Name="ButtonTakeImage" Clicked="ButtonTakeImageClicked"
-                Text="Take Image"/>
-        
-        <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Waiting for name"
-               PlaceholderColor="Olive"/>
-        <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Waiting for description"
-                PlaceholderColor="Olive" AutoSize="TextChanges"/>
-        <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
-               PlaceholderColor="Olive"/>
-    </StackLayout>
+    <ScrollView>
+        <StackLayout>
+            <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
+            <Button x:Name="ButtonTakeImage" Clicked="ButtonTakeImageClicked"
+                    Text="Take Image"/>
+            
+            <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Waiting for name"
+                   PlaceholderColor="Olive"/>
+            <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Waiting for description"
+                    PlaceholderColor="Olive" AutoSize="TextChanges"/>
+            <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
+                   PlaceholderColor="Olive"/>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
