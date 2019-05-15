@@ -147,7 +147,7 @@ namespace Landmarks
                     // float cast here seems necessary on Android to prevent Cast exception...
                     Volume = (float)Preferences.Get("Volume", 100)/100,
                     Pitch = 1.0f,
-                    Locale = locales.ElementAt(Preferences.Get("Locale", 0))
+                    Locale = locales.OrderBy((arg) => arg.Name).ElementAt(Preferences.Get("Locale", 0))
                 };
                 cts = new CancellationTokenSource();
                 await TextToSpeech.SpeakAsync(landmark.Description, settings, cts.Token);

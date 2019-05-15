@@ -23,11 +23,12 @@ namespace Landmarks
             if (locales == null)
             {
                 locales = await TextToSpeech.GetLocalesAsync();
-                PickerLocales.ItemsSource = locales.ToList();
+                PickerLocales.ItemsSource = locales.OrderBy((arg) => arg.Name).ToList();
                 PickerLocales.ItemDisplayBinding = new Binding("Name");
+                PickerLocales.Title = "Choose a language";
             }
-            PickerLocales.SelectedIndex = Preferences.Get("Locale", 0);
             SliderVolume.Value = Preferences.Get("Volume", 100);
+            PickerLocales.SelectedIndex = Preferences.Get("Locale", 0);
             CheckBoxText2Speech.IsChecked = Preferences.Get("Text2Speech", true);
         }
 
