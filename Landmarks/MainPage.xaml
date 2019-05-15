@@ -11,10 +11,9 @@
             <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
             <Button x:Name="ButtonTakeImage" Clicked="ButtonTakeImageClicked"
                     Text="Take Image"/>
-            
-            <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Waiting for name"
+            <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Landmark"
                    PlaceholderColor="Olive"/>
-            <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Waiting for description"
+            <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Description"
                     PlaceholderColor="Olive" AutoSize="TextChanges"/>
             <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
                    PlaceholderColor="Olive"/>
