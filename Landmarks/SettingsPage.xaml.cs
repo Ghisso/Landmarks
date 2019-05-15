@@ -28,6 +28,7 @@ namespace Landmarks
             }
             PickerLocales.SelectedIndex = Preferences.Get("Locale", 0);
             SliderVolume.Value = Preferences.Get("Volume", 100);
+            CheckBoxText2Speech.IsChecked = Preferences.Get("Text2Speech", true);
         }
 
         protected override void OnDisappearing()
