@@ -44,11 +44,12 @@ namespace Landmarks
             }
         }
 
-        public async Task<List<Locale>> GetLocales()
+        protected override void OnDisappearing()
         {
-            var l = await TextToSpeech.GetLocalesAsync();
-            return l.ToList();
+            base.OnDisappearing();
+            CancelSpeech();
         }
+
 
         public void CancelSpeech()
         {
@@ -137,7 +138,7 @@ namespace Landmarks
             EntryLandmarkName.Text = landmark.Name;
             EditorLandmarkDescription.Text = landmark.Description;
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
-            if (CheckBoxText2Speech.IsChecked)
+            if (Preferences.Get("Text2Speech", true))
             {
 
                 var locale = locales.Last();

@@ -35,6 +35,7 @@ namespace Landmarks
             base.OnDisappearing();
             Preferences.Set("Volume", (int)SliderVolume.Value);
             Preferences.Set("Locale", PickerLocales.SelectedIndex);
+            Preferences.Set("Text2Speech", CheckBoxText2Speech.IsChecked);
         }
     }
 }
