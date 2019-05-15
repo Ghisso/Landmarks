@@ -20,17 +20,20 @@ namespace Landmarks
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            locales = await TextToSpeech.GetLocalesAsync();
-            PickerLocales.ItemsSource = locales.ToList();
-            PickerLocales.ItemDisplayBinding = new Binding("Name");
+            if (locales == null)
+            {
+                locales = await TextToSpeech.GetLocalesAsync();
+                PickerLocales.ItemsSource = locales.ToList();
+                PickerLocales.ItemDisplayBinding = new Binding("Name");
+            }
             PickerLocales.SelectedIndex = Preferences.Get("Locale", 0);
-            SliderVolume.Value=Preferences.Get("Volume", 100);
+            SliderVolume.Value = Preferences.Get("Volume", 100);
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            Preferences.Set("Volume", SliderVolume.Value);
+            Preferences.Set("Volume", (int)SliderVolume.Value);
             Preferences.Set("Locale", PickerLocales.SelectedIndex);
         }
     }

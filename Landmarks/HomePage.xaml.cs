@@ -15,6 +15,7 @@ namespace Landmarks
         public HomePage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
         }
     }
 }
