@@ -74,11 +74,26 @@ namespace Landmarks
 
         public static async Task<Landmark> AnalyzeImage(Stream stream)
         {
+            Landmark landmark;
             var imageArray = ReadFully(stream);
             var response = await client.PostAsync(url, new ByteArrayContent(imageArray));
             var replyBody = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<Result>(replyBody);
-            var landmark = new Landmark()
+
+            // It should always return a prediction... 
+            // But one exception is when size of the pic is larger than 4MB it returns bad data
+            // This check is to say that no landmark was found but should be changed to display error about size?
+            // Played with photo options below to reduce the size of the image but keeping this just in case
+            if (result.Predictions == null || result.Predictions[0] == null)
+            {
+                landmark = new Landmark()
+                {
+                    Name = "No landmark found",
+                    Confidence = 0
+                };
+                return landmark;
+            }
+            landmark = new Landmark()
             {
                 Name = result.Predictions[0].TagName,
                 Confidence = result.Predictions[0].Probability
@@ -103,10 +118,14 @@ namespace Landmarks
 
             if (cameraStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted)
             {
+                // Added image size reductions because custom vision API only accepts images max 4MB
                 var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
                 {
                     Directory = "Sample",
-                    Name = "test.jpg"
+                    Name = "test.jpg",
+                    PhotoSize = PhotoSize.Large,
+                    CompressionQuality = 92,
+                    SaveToAlbum = true
                 });
 
                 ImageTaken.Source = ImageSource.FromStream(() =>
