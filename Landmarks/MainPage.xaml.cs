@@ -121,7 +121,7 @@ namespace Landmarks
                 // Added image size reductions because custom vision API only accepts images max 4MB
                 var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
                 {
-                    Directory = "Sample",
+                    Directory = "Landmarks",
                     Name = "test.jpg",
                     PhotoSize = PhotoSize.Large,
                     CompressionQuality = 92,
