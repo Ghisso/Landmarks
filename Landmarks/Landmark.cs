@@ -9,9 +9,14 @@ namespace Landmarks
         public string Description { get; set; }
     }
 
-    public class Result
+    public class CustomVisionAPIResult
     {
         public IList<Prediction> Predictions { get; set; }
+    }
+
+    public class VisionAPIResult
+    {
+        public IList<Landmark> Landmarks { get; set; }
     }
 
     public class Prediction

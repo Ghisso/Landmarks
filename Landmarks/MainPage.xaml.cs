@@ -95,9 +95,32 @@ namespace Landmarks
         }
 
 
+        async void ButtonChooseImageClicked(object sender, System.EventArgs e)
+        {
+            Landmark landmark;
+            var stopwatch = new Stopwatch();
+
+            // Cancel speech if one was ongoing
+            CancelSpeech();
+
+            bool permission = await CheckAndRequestPermissions();
+            if (!permission)
+                return;
+
+            landmark = await ChoosePhotoAndAnalyze(stopwatch);
+
+            if (landmark == null)
+                return;
+
+            await UpdateUIAfterAnalysis(landmark, stopwatch);
+        }
+
+
         private async Task<Landmark> TakePhotoAndAnalyze(Stopwatch stopwatch)
         {
             Landmark landmark;
+
+            ResetUI();
 
             // Added image size reductions because custom vision API only accepts images max 4MB
             var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
@@ -118,7 +141,11 @@ namespace Landmarks
                 return stream;
             });
             stopwatch.Start();
-            landmark = await LandmarkFinder.AnalyzeImage(file.GetStream());
+            landmark = await LandmarkFinder.AnalyzeImageVisionAPI(file.GetStream());
+            if (landmark.Name == "No landmark found")
+            {
+                landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(file.GetStream());
+            }
             landmark.Description = $"Description of {landmark.Name}";
             stopwatch.Stop();
             return landmark;
@@ -129,7 +156,9 @@ namespace Landmarks
         {
             Landmark landmark;
 
-            var response = await client.GetAsync("https://s27363.pcdn.co/wp-content/uploads/2017/03/Himeji-Castle-Japan-1163x775.jpg.optimal.jpg");
+            ResetUI();
+
+            var response = await client.GetAsync("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR-xWsHUM-W2j4dorc-yafy35Z5xPgRbbnf1pEG_MbGgxE2YSAzA");
 
             // Need the 2 here or else the image won't appear in the interface (but analysis will be performed) ...
             var fileStream = await response.Content.ReadAsStreamAsync();
@@ -139,8 +168,45 @@ namespace Landmarks
                 return imageStream;
             });
             stopwatch.Start();
-            landmark = await LandmarkFinder.AnalyzeImage(fileStream);
+            landmark = await LandmarkFinder.AnalyzeImageVisionAPI(fileStream);
+            if (landmark.Name == "No landmark found")
+            {
+                landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(fileStream);
+            }
             landmark.Description = string.Concat(Enumerable.Repeat($"Description of {landmark.Name} ", 5));
+            stopwatch.Stop();
+            return landmark;
+        }
+
+
+        private async Task<Landmark> ChoosePhotoAndAnalyze(Stopwatch stopwatch)
+        {
+            Landmark landmark;
+
+            ResetUI();
+
+            // Added image size reductions because custom vision API only accepts images max 4MB
+            var file = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions()
+            {
+                PhotoSize = PhotoSize.Large,
+                CompressionQuality = 92
+            });
+
+            if (file == null)
+                return null;
+
+            ImageTaken.Source = ImageSource.FromStream(() =>
+            {
+                var stream = file.GetStream();
+                return stream;
+            });
+            stopwatch.Start();
+            landmark = await LandmarkFinder.AnalyzeImageVisionAPI(file.GetStream());
+            if (landmark.Name == "No landmark found")
+            {
+                landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(file.GetStream());
+            }
+            landmark.Description = $"Description of {landmark.Name}";
             stopwatch.Stop();
             return landmark;
         }
@@ -163,6 +229,15 @@ namespace Landmarks
                 cts = new CancellationTokenSource();
                 await TextToSpeech.SpeakAsync(landmark.Description, settings, cts.Token);
             }
+        }
+
+
+        private void ResetUI()
+        {
+            EntryLandmarkName.Text = "";
+            EditorLandmarkDescription.Text = "";
+            EntryTime.Text = "";
+            ImageTaken.Source = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw";
         }
     }
 }

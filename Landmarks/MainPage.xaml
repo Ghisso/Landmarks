@@ -11,6 +11,8 @@
             <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
             <Button x:Name="ButtonTakeImage" Clicked="ButtonTakeImageClicked"
                     Text="Take Image"/>
+            <Button x:Name="ButtonChooseImage" Clicked="ButtonChooseImageClicked"
+                    Text="Choose image from gallery Image"/>
             <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Landmark"
                    PlaceholderColor="Olive"/>
             <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Description"
