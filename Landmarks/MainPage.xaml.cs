@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Essentials;
-using Plugin.InputKit;
 using System.Threading;
 
 namespace Landmarks
@@ -25,24 +20,28 @@ namespace Landmarks
     public partial class MainPage : ContentPage
     {
         CancellationTokenSource cts;
-        private static readonly HttpClient client = new HttpClient();
-        private static readonly string url = "https://japaneast.api.cognitive.microsoft.com/customvision/v3.0/Prediction/76f0d893-7cda-4625-90ec-8470bd025024/classify/iterations/TestIteration/image";
+        HttpClient client = new HttpClient();
         IEnumerable<Locale> locales;
+
 
         public MainPage()
         {
             InitializeComponent();
-            client.DefaultRequestHeaders.Add("Prediction-Key", "c7b31743df8a4b599690ec34bf7dd568");
         }
+
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
+            // Initializing locales the first time and order them by name so as not to do it every time
             if (locales == null)
             {
                 locales = await TextToSpeech.GetLocalesAsync();
+                locales = locales.OrderBy((arg) => arg.Name);
             }
         }
+
 
         protected override void OnDisappearing()
         {
@@ -62,50 +61,8 @@ namespace Landmarks
         }
 
 
-        public static byte[] ReadFully(Stream input)
+        async Task<bool> CheckAndRequestPermissions()
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                input.CopyTo(ms);
-                return ms.ToArray();
-            }
-        }
-
-
-        public static async Task<Landmark> AnalyzeImage(Stream stream)
-        {
-            Landmark landmark;
-            var imageArray = ReadFully(stream);
-            var response = await client.PostAsync(url, new ByteArrayContent(imageArray));
-            var replyBody = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<Result>(replyBody);
-
-            // It should always return a prediction... 
-            // But one exception is when size of the pic is larger than 4MB it returns bad data
-            // This check is to say that no landmark was found but should be changed to display error about size?
-            // Played with photo options below to reduce the size of the image but keeping this just in case
-            if (result.Predictions == null || result.Predictions[0] == null)
-            {
-                landmark = new Landmark()
-                {
-                    Name = "No landmark found",
-                    Confidence = 0
-                };
-                return landmark;
-            }
-            landmark = new Landmark()
-            {
-                Name = result.Predictions[0].TagName,
-                Confidence = result.Predictions[0].Probability
-            };
-            return landmark;
-        }
-
-        async void ButtonTakeImageClicked(object sender, System.EventArgs e)
-        {
-            CancelSpeech();
-            var stopwatch = new Stopwatch();
-            Landmark landmark;
             var cameraStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
             var storageStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
 
@@ -115,58 +72,92 @@ namespace Landmarks
                 cameraStatus = results[Permission.Camera];
                 storageStatus = results[Permission.Storage];
             }
+            return cameraStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted;
+        }
 
-            if (cameraStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted)
+
+        async void ButtonTakeImageClicked(object sender, System.EventArgs e)
+        {
+            Landmark landmark;
+            var stopwatch = new Stopwatch();
+
+            // Cancel speech if one was ongoing
+            CancelSpeech();
+
+            if (await CheckAndRequestPermissions())
             {
-                // Added image size reductions because custom vision API only accepts images max 4MB
-                var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
-                {
-                    Directory = "Landmarks",
-                    Name = "test.jpg",
-                    PhotoSize = PhotoSize.Large,
-                    CompressionQuality = 92,
-                    SaveToAlbum = true
-                });
-
-                ImageTaken.Source = ImageSource.FromStream(() =>
-                {
-                    var stream = file.GetStream();
-                    return stream;
-                });
-                stopwatch.Start();
-                landmark = await AnalyzeImage(file.GetStream());
-                landmark.Description = $"Description of {landmark.Name}";
-                stopwatch.Stop();
+                landmark = await TakePhotoAndAnalyze(stopwatch);
             }
             else
             {
-                var response = await client.GetAsync("https://s27363.pcdn.co/wp-content/uploads/2017/03/Himeji-Castle-Japan-1163x775.jpg.optimal.jpg");
-                var fileStream = await response.Content.ReadAsStreamAsync();
-                fileStream.Position = 0;
-                var stream = await response.Content.ReadAsStreamAsync();
-                ImageTaken.Source = ImageSource.FromStream(() =>
-                {
-                    return stream;
-                });
-                stopwatch.Start();
-                landmark = await AnalyzeImage(fileStream);
-                landmark.Description = string.Concat(Enumerable.Repeat($"Description of {landmark.Name} ", 5));
-                stopwatch.Stop();
+                landmark = await FetchPhotoFromInternetAndAnalyze(stopwatch);
             }
 
+            await UpdateUIAfterAnalysis(landmark, stopwatch);
+        }
+
+
+        private async Task<Landmark> TakePhotoAndAnalyze(Stopwatch stopwatch)
+        {
+            Landmark landmark;
+
+            // Added image size reductions because custom vision API only accepts images max 4MB
+            var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+            {
+                Directory = "Landmarks",
+                Name = "test.jpg",
+                PhotoSize = PhotoSize.Large,
+                CompressionQuality = 92,
+                SaveToAlbum = true
+            });
+
+            ImageTaken.Source = ImageSource.FromStream(() =>
+            {
+                var stream = file.GetStream();
+                return stream;
+            });
+            stopwatch.Start();
+            landmark = await LandmarkFinder.AnalyzeImage(file.GetStream());
+            landmark.Description = $"Description of {landmark.Name}";
+            stopwatch.Stop();
+            return landmark;
+        }
+
+
+        private async Task<Landmark> FetchPhotoFromInternetAndAnalyze(Stopwatch stopwatch)
+        {
+            Landmark landmark;
+
+            var response = await client.GetAsync("https://s27363.pcdn.co/wp-content/uploads/2017/03/Himeji-Castle-Japan-1163x775.jpg.optimal.jpg");
+
+            // Need the 2 here or else the image won't appear in the interface (but analysis will be performed) ...
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            var imageStream = await response.Content.ReadAsStreamAsync();
+            ImageTaken.Source = ImageSource.FromStream(() =>
+            {
+                return imageStream;
+            });
+            stopwatch.Start();
+            landmark = await LandmarkFinder.AnalyzeImage(fileStream);
+            landmark.Description = string.Concat(Enumerable.Repeat($"Description of {landmark.Name} ", 5));
+            stopwatch.Stop();
+            return landmark;
+        }
+
+
+        private async Task UpdateUIAfterAnalysis(Landmark landmark, Stopwatch stopwatch)
+        {
             EntryLandmarkName.Text = landmark.Name;
             EditorLandmarkDescription.Text = landmark.Description;
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
             if (Preferences.Get("Text2Speech", true))
             {
-
-                var locale = locales.Last();
                 var settings = new SpeechOptions()
                 {
                     // float cast here seems necessary on Android to prevent Cast exception...
-                    Volume = (float)Preferences.Get("Volume", 100)/100,
+                    Volume = (float)Preferences.Get("Volume", 100) / 100,
                     Pitch = 1.0f,
-                    Locale = locales.OrderBy((arg) => arg.Name).ElementAt(Preferences.Get("Locale", 0))
+                    Locale = locales.ElementAt(Preferences.Get("Locale", 0))
                 };
                 cts = new CancellationTokenSource();
                 await TextToSpeech.SpeakAsync(landmark.Description, settings, cts.Token);
