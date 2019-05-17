@@ -93,6 +93,9 @@ namespace Landmarks
                 landmark = await FetchPhotoFromInternetAndAnalyze(stopwatch);
             }
 
+            if (landmark == null)
+                return;
+            
             await UpdateUIAfterAnalysis(landmark, stopwatch);
         }
 
@@ -111,6 +114,9 @@ namespace Landmarks
                 SaveToAlbum = true
             });
 
+            if (file == null)
+                return null;
+            
             ImageTaken.Source = ImageSource.FromStream(() =>
             {
                 var stream = file.GetStream();
