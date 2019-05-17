@@ -18,8 +18,10 @@
                        PlaceholderColor="Olive" Grid.Row="0"/>
                 <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Description"
                         PlaceholderColor="Olive" AutoSize="TextChanges" Grid.Row="1"/>
-                <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
+                <Entry x:Name="EntryConfidence" IsReadOnly="true" Placeholder="Confidence"
                        PlaceholderColor="Olive" Grid.Row="2"/>
+                <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
+                       PlaceholderColor="Olive" Grid.Row="3"/>
                 <ActivityIndicator x:Name="ActivityIndicator" HorizontalOptions="Center" VerticalOptions="Center"
                            Color="Green" IsRunning="false" Grid.Row="1"/>
             </Grid>

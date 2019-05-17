@@ -219,6 +219,7 @@ namespace Landmarks
         {
             EntryLandmarkName.Text = landmark.Name;
             EditorLandmarkDescription.Text = landmark.Description;
+            EntryConfidence.Text = landmark.Confidence.ToString();
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
             ActivityIndicator.IsRunning = false;
 
@@ -242,6 +243,7 @@ namespace Landmarks
             EntryLandmarkName.Text = "";
             EditorLandmarkDescription.Text = "";
             EntryTime.Text = "";
+            EntryConfidence.Text = "";
             ImageTaken.Source = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw";
         }
     }
