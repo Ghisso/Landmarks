@@ -84,14 +84,9 @@ namespace Landmarks
             // Cancel speech if one was ongoing
             CancelSpeech();
 
-            if (await CheckAndRequestPermissions())
-            {
-                landmark = await TakePhotoAndAnalyze(stopwatch);
-            }
-            else
-            {
-                landmark = await FetchPhotoFromInternetAndAnalyze(stopwatch);
-            }
+            landmark = await CheckAndRequestPermissions() ? 
+                        await TakePhotoAndAnalyze(stopwatch) : 
+                        await FetchPhotoFromInternetAndAnalyze(stopwatch);
 
             if (landmark == null)
                 return;
