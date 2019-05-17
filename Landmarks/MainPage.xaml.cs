@@ -140,6 +140,7 @@ namespace Landmarks
                 var stream = file.GetStream();
                 return stream;
             });
+            ActivityIndicator.IsRunning = true;
             stopwatch.Start();
             landmark = await LandmarkFinder.AnalyzeImageVisionAPI(file.GetStream());
             if (landmark.Name == "No landmark found")
@@ -167,6 +168,7 @@ namespace Landmarks
             {
                 return imageStream;
             });
+            ActivityIndicator.IsRunning = true;
             stopwatch.Start();
             landmark = await LandmarkFinder.AnalyzeImageVisionAPI(fileStream);
             if (landmark.Name == "No landmark found")
@@ -200,6 +202,7 @@ namespace Landmarks
                 var stream = file.GetStream();
                 return stream;
             });
+            ActivityIndicator.IsRunning = true;
             stopwatch.Start();
             landmark = await LandmarkFinder.AnalyzeImageVisionAPI(file.GetStream());
             if (landmark.Name == "No landmark found")
@@ -217,6 +220,8 @@ namespace Landmarks
             EntryLandmarkName.Text = landmark.Name;
             EditorLandmarkDescription.Text = landmark.Description;
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
+            ActivityIndicator.IsRunning = false;
+
             if (Preferences.Get("Text2Speech", true))
             {
                 var settings = new SpeechOptions()
