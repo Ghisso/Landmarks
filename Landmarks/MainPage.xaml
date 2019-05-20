@@ -8,23 +8,23 @@
              Visual="Material">
     <ScrollView>
         <StackLayout>
-            <Image x:Name="ImageTaken" Aspect="AspectFit" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
+            <Grid >
+                <Image x:Name="ImageTaken" Aspect="AspectFill" Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw"/>
+                <ActivityIndicator x:Name="ActivityIndicator" HorizontalOptions="Center" VerticalOptions="Center"
+                       Color="Green" IsRunning="false"/>
+            </Grid>
             <Button x:Name="ButtonTakeImage" Clicked="ButtonTakeImageClicked"
                     Text="Take Image"/>
             <Button x:Name="ButtonChooseImage" Clicked="ButtonChooseImageClicked"
                     Text="Choose image from gallery Image"/>
-            <Grid>
-                <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Landmark"
-                       PlaceholderColor="Olive" Grid.Row="0"/>
-                <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Description"
-                        PlaceholderColor="Olive" MaxLength="300" Grid.Row="1" />
-                <Entry x:Name="EntryConfidence" IsReadOnly="true" Placeholder="Confidence"
-                       PlaceholderColor="Olive" Grid.Row="2"/>
-                <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
-                       PlaceholderColor="Olive" Grid.Row="3"/>
-                <ActivityIndicator x:Name="ActivityIndicator" HorizontalOptions="Center" VerticalOptions="Center"
-                           Color="Green" IsRunning="false" Grid.Row="1"/>
-            </Grid>
+            <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Landmark"
+                   PlaceholderColor="Olive"/>
+            <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Description"
+                    PlaceholderColor="Olive" AutoSize="TextChanges"/>
+            <Entry x:Name="EntryConfidence" IsReadOnly="true" Placeholder="Confidence"
+                   PlaceholderColor="Olive"/>
+            <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
+                   PlaceholderColor="Olive"/>
         </StackLayout>
         
     </ScrollView>
