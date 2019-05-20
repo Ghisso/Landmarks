@@ -11,6 +11,7 @@ using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Essentials;
 using System.Threading;
+using System.IO;
 
 namespace Landmarks
 {
@@ -22,6 +23,7 @@ namespace Landmarks
         CancellationTokenSource cts;
         HttpClient client = new HttpClient();
         IEnumerable<Locale> locales;
+        Landmark landmark = new Landmark();
 
 
         public MainPage()
@@ -78,7 +80,6 @@ namespace Landmarks
 
         async void ButtonTakeImageClicked(object sender, System.EventArgs e)
         {
-            Landmark landmark;
             var stopwatch = new Stopwatch();
 
             // Cancel speech if one was ongoing
@@ -91,13 +92,12 @@ namespace Landmarks
             if (landmark == null)
                 return;
             
-            await UpdateUIAfterAnalysis(landmark, stopwatch);
+            await UpdateUIAfterAnalysis(stopwatch);
         }
 
 
         async void ButtonChooseImageClicked(object sender, System.EventArgs e)
         {
-            Landmark landmark;
             var stopwatch = new Stopwatch();
 
             // Cancel speech if one was ongoing
@@ -112,14 +112,12 @@ namespace Landmarks
             if (landmark == null)
                 return;
 
-            await UpdateUIAfterAnalysis(landmark, stopwatch);
+            await UpdateUIAfterAnalysis(stopwatch);
         }
 
 
         private async Task<Landmark> TakePhotoAndAnalyze(Stopwatch stopwatch)
         {
-            Landmark landmark;
-
             ResetUI();
 
             // Added image size reductions because custom vision API only accepts images max 4MB
@@ -134,20 +132,18 @@ namespace Landmarks
 
             if (file == null)
                 return null;
-            
+
             ImageTaken.Source = ImageSource.FromStream(() =>
             {
                 var stream = file.GetStream();
                 return stream;
             });
             ActivityIndicator.IsRunning = true;
+
+
             stopwatch.Start();
-            landmark = await LandmarkFinder.AnalyzeImageVisionAPI(file.GetStream());
-            if (landmark.Name == "No landmark found")
-            {
-                landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(file.GetStream());
-            }
-            landmark.Description = $"Description of {landmark.Name}";
+            Stream streamToAnalyze = file.GetStream();
+            landmark = await AnalyzeImage(landmark, streamToAnalyze);
             stopwatch.Stop();
             return landmark;
         }
@@ -155,8 +151,6 @@ namespace Landmarks
 
         private async Task<Landmark> FetchPhotoFromInternetAndAnalyze(Stopwatch stopwatch)
         {
-            Landmark landmark;
-
             ResetUI();
 
             var response = await client.GetAsync("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR-xWsHUM-W2j4dorc-yafy35Z5xPgRbbnf1pEG_MbGgxE2YSAzA");
@@ -169,13 +163,10 @@ namespace Landmarks
                 return imageStream;
             });
             ActivityIndicator.IsRunning = true;
+
+
             stopwatch.Start();
-            landmark = await LandmarkFinder.AnalyzeImageVisionAPI(fileStream);
-            if (landmark.Name == "No landmark found")
-            {
-                landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(fileStream);
-            }
-            landmark.Description = string.Concat(Enumerable.Repeat($"Description of {landmark.Name} ", 5));
+            landmark = await AnalyzeImage(landmark, fileStream);
             stopwatch.Stop();
             return landmark;
         }
@@ -183,8 +174,6 @@ namespace Landmarks
 
         private async Task<Landmark> ChoosePhotoAndAnalyze(Stopwatch stopwatch)
         {
-            Landmark landmark;
-
             ResetUI();
 
             // Added image size reductions because custom vision API only accepts images max 4MB
@@ -203,19 +192,39 @@ namespace Landmarks
                 return stream;
             });
             ActivityIndicator.IsRunning = true;
+
+
             stopwatch.Start();
-            landmark = await LandmarkFinder.AnalyzeImageVisionAPI(file.GetStream());
-            if (landmark.Name == "No landmark found")
-            {
-                landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(file.GetStream());
-            }
-            landmark.Description = $"Description of {landmark.Name}";
+            Stream streamToAnalyze = file.GetStream();
+            landmark = await AnalyzeImage(landmark, streamToAnalyze);
             stopwatch.Stop();
             return landmark;
         }
 
 
-        private async Task UpdateUIAfterAnalysis(Landmark landmark, Stopwatch stopwatch)
+        private static async Task<Landmark> AnalyzeImage(Landmark landmark, Stream fileStream)
+        {
+            // Due to extracting this method out of the calling methods, the stream is disposed after
+            // landmark = await LandmarkFinder.AnalyzeImageVisionAPI(fileStream); so must first copy it
+            // to use it for the next call to CustomVisionAPI
+            MemoryStream ms = new MemoryStream();
+            fileStream.CopyTo(ms);
+            fileStream.Position = 0;
+            landmark = await LandmarkFinder.AnalyzeImageVisionAPI(fileStream);
+            if (landmark.Name == "No landmark found")
+            {
+                landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(ms.ToArray());
+                if (landmark.Confidence < 0.85)
+                {
+                    landmark.Name = "No landmark found";
+                }
+            }
+            landmark.Description = string.Concat(Enumerable.Repeat($"Description of {landmark.Name} ", 5));
+            return landmark;
+        }
+
+
+        private async Task UpdateUIAfterAnalysis(Stopwatch stopwatch)
         {
             EntryLandmarkName.Text = landmark.Name;
             EditorLandmarkDescription.Text = landmark.Description;

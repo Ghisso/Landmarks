@@ -46,10 +46,9 @@ namespace Landmarks
         }
 
 
-        public static async Task<Landmark> AnalyzeImageCustomVisionAPI(Stream stream)
+        public static async Task<Landmark> AnalyzeImageCustomVisionAPI(byte[] imageArray)
         {
             Landmark landmark;
-            var imageArray = ReadFully(stream);
             var response = await client.PostAsync(customVisionURL, new ByteArrayContent(imageArray));
             var replyBody = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<CustomVisionAPIResult>(replyBody);

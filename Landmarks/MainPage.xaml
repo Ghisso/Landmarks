@@ -17,7 +17,7 @@
                 <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Landmark"
                        PlaceholderColor="Olive" Grid.Row="0"/>
                 <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Description"
-                        PlaceholderColor="Olive" AutoSize="TextChanges" Grid.Row="1"/>
+                        PlaceholderColor="Olive" MaxLength="300" Grid.Row="1" />
                 <Entry x:Name="EntryConfidence" IsReadOnly="true" Placeholder="Confidence"
                        PlaceholderColor="Olive" Grid.Row="2"/>
                 <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
