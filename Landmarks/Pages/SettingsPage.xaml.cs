@@ -51,5 +51,15 @@ namespace Landmarks.Pages
             SliderPitch.IsEnabled = SwitchText2Speech.On;
             PickerLocales.IsEnabled = SwitchText2Speech.On;
         }
+
+        void Handle_VolumeValueChanged(object sender, Xamarin.Forms.ValueChangedEventArgs e)
+        {
+            LabelVolumeValue.Text = ((int)SliderVolume.Value).ToString();
+        }
+
+        void Handle_PitchValueChanged(object sender, Xamarin.Forms.ValueChangedEventArgs e)
+        {
+            LabelPitchValue.Text = ((int)SliderPitch.Value).ToString();
+        }
     }
 }

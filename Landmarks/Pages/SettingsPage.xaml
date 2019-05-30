@@ -24,13 +24,21 @@
                             
                             <Label Text="Volume" Grid.Row="0" Grid.Column="0" HorizontalOptions="Start"
                                    VerticalOptions="Center" Margin="17,0,0,0"/>
-                            <Slider x:Name="SliderVolume" Grid.Row="0" Grid.Column="1" WidthRequest="200"
-                                    Maximum="100" Minimum="0" HorizontalOptions="EndAndExpand" />
+                            <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalOptions="EndAndExpand">
+                                <Slider x:Name="SliderVolume" WidthRequest="150"
+                                    Maximum="100" Minimum="0" HorizontalOptions="Start" ValueChanged="Handle_VolumeValueChanged"/>
+                                <Label x:Name="LabelVolumeValue" HorizontalOptions="End" VerticalOptions="Center"/>
+                            </StackLayout>
+                            
                             
                             <Label Text="Pitch" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start"
                                    VerticalOptions="Center" Margin="17,0,0,0" />
-                            <Slider x:Name="SliderPitch" Grid.Row="1" Grid.Column="1" WidthRequest="200"
-                                    Maximum="100" Minimum="0" HorizontalOptions="EndAndExpand"/>
+                            <StackLayout Orientation="Horizontal" Grid.Row="1" Grid.Column="1" HorizontalOptions="EndAndExpand">
+                                <Slider x:Name="SliderPitch" WidthRequest="150"
+                                    Maximum="100" Minimum="0" HorizontalOptions="Start" ValueChanged="Handle_PitchValueChanged"/>
+                                <Label x:Name="LabelPitchValue" HorizontalOptions="End" VerticalOptions="Center"/>
+                            </StackLayout>
+                            
                             
                             <Label Text="Locale" HorizontalOptions="Start" VerticalOptions="Center"
                                        Grid.Row="2" Grid.Column="0" Margin="17,0,0,0"/>
