@@ -239,7 +239,7 @@ namespace Landmarks.Pages
                 {
                     // float cast here seems necessary on Android to prevent Cast exception...
                     Volume = (float)Preferences.Get("Volume", 100) / 100,
-                    Pitch = 1.0f,
+                    Pitch = (float)Preferences.Get("Pitch", 100) / 100,
                     Locale = locales.ElementAt(Preferences.Get("Locale", 0))
                 };
                 cts = new CancellationTokenSource();

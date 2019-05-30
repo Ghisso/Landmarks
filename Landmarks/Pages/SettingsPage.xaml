@@ -4,45 +4,42 @@
              x:Class="Landmarks.Pages.SettingsPage"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
-             xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit"
-             >
+             xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit">
     <ContentPage.Content>
         
-        <TableView Intent="Settings"  Margin="5">
+        <TableView Intent="Settings"  Margin="5" HasUnevenRows="true">
             <TableRoot>
                 
-                <TableSection Title="Audio" TextColor="Blue">
-                   <ViewCell>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="6*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Text="Volume" Grid.Row="0" Grid.Column="0" HorizontalOptions="Start"
-                                   VerticalOptions="Center" Margin="17,0,0,0" />
-                            <Slider x:Name="SliderVolume" Grid.Row="0" Grid.Column="1" WidthRequest="200"
-                                    Maximum="100" Minimum="0" HorizontalOptions="EndAndExpand"/>
-                        </Grid>
-                    </ViewCell>
-                </TableSection>
-                
-                <TableSection Title="Speech" TextColor="Blue">
-                    <ViewCell>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="6*" />
-                            </Grid.ColumnDefinitions>
-                                <Label Text="Locale" HorizontalOptions="Start" VerticalOptions="Center"
-                                       Grid.Row="0" Grid.Column="0" Margin="17,0,0,0"/>
-                                <Picker x:Name="PickerLocales" Grid.Row="0" Grid.Column="1"
-                                        HorizontalOptions="EndAndExpand" /> 
-                        </Grid>
-                    </ViewCell>
+                <TableSection Title="Speech Options" TextColor="Blue">
                     
-                    <SwitchCell x:Name="SwitchText2Speech" Text="Text-to-Speech">  
+                    <SwitchCell x:Name="SwitchText2Speech" Text="Text-to-Speech" OnChanged="Handle_OnSwitchText2SpeechChanged">  
                     </SwitchCell>
                     
+                    <ViewCell x:Name="ViewCellSpeechSettings">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="6*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Label Text="Volume" Grid.Row="0" Grid.Column="0" HorizontalOptions="Start"
+                                   VerticalOptions="Center" Margin="17,0,0,0"/>
+                            <Slider x:Name="SliderVolume" Grid.Row="0" Grid.Column="1" WidthRequest="200"
+                                    Maximum="100" Minimum="0" HorizontalOptions="EndAndExpand" />
+                            
+                            <Label Text="Pitch" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start"
+                                   VerticalOptions="Center" Margin="17,0,0,0" />
+                            <Slider x:Name="SliderPitch" Grid.Row="1" Grid.Column="1" WidthRequest="200"
+                                    Maximum="100" Minimum="0" HorizontalOptions="EndAndExpand"/>
+                            
+                            <Label Text="Locale" HorizontalOptions="Start" VerticalOptions="Center"
+                                       Grid.Row="2" Grid.Column="0" Margin="17,0,0,0"/>
+                            <Picker x:Name="PickerLocales" Grid.Row="2" Grid.Column="1"
+                                    HorizontalOptions="EndAndExpand" /> 
+                            
+                        </Grid>
+                                
+                    </ViewCell>
                 </TableSection>
                 
             </TableRoot>

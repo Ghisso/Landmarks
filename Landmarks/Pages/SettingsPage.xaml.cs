@@ -28,16 +28,28 @@ namespace Landmarks.Pages
                 PickerLocales.Title = "Choose a language";
             }
             SliderVolume.Value = Preferences.Get("Volume", 100);
+            SliderPitch.Value = Preferences.Get("Pitch", 100);
             PickerLocales.SelectedIndex = Preferences.Get("Locale", 0);
-            SwitchText2Speech.On = Preferences.Get("Text2Speech", true);
+            SwitchText2Speech.On = Preferences.Get("Text2Speech", false);
+            SliderVolume.IsEnabled = SwitchText2Speech.On;
+            SliderPitch.IsEnabled = SwitchText2Speech.On;
+            PickerLocales.IsEnabled = SwitchText2Speech.On;
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             Preferences.Set("Volume", (int)SliderVolume.Value);
+            Preferences.Set("Pitch", (int)SliderPitch.Value);
             Preferences.Set("Locale", PickerLocales.SelectedIndex);
             Preferences.Set("Text2Speech", SwitchText2Speech.On);
+        }
+
+        void Handle_OnSwitchText2SpeechChanged(object sender, Xamarin.Forms.ToggledEventArgs e)
+        {
+            SliderVolume.IsEnabled = SwitchText2Speech.On;
+            SliderPitch.IsEnabled = SwitchText2Speech.On;
+            PickerLocales.IsEnabled = SwitchText2Speech.On;
         }
     }
 }
