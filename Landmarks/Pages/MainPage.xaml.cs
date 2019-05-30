@@ -12,8 +12,9 @@ using Xamarin.Forms;
 using Xamarin.Essentials;
 using System.Threading;
 using System.IO;
+using Landmarks.Models;
 
-namespace Landmarks
+namespace Landmarks.Pages
 {
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer

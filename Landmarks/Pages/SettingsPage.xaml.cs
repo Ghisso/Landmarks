@@ -4,7 +4,7 @@ using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace Landmarks
+namespace Landmarks.Pages
 {
     public partial class SettingsPage : ContentPage
     {
@@ -29,7 +29,7 @@ namespace Landmarks
             }
             SliderVolume.Value = Preferences.Get("Volume", 100);
             PickerLocales.SelectedIndex = Preferences.Get("Locale", 0);
-            CheckBoxText2Speech.IsChecked = Preferences.Get("Text2Speech", true);
+            SwitchText2Speech.On = Preferences.Get("Text2Speech", true);
         }
 
         protected override void OnDisappearing()
@@ -37,7 +37,7 @@ namespace Landmarks
             base.OnDisappearing();
             Preferences.Set("Volume", (int)SliderVolume.Value);
             Preferences.Set("Locale", PickerLocales.SelectedIndex);
-            Preferences.Set("Text2Speech", CheckBoxText2Speech.IsChecked);
+            Preferences.Set("Text2Speech", SwitchText2Speech.On);
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
+using Landmarks.Pages;
 
 namespace Landmarks
 {
@@ -10,7 +9,7 @@ namespace Landmarks
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new HomePage());
+            MainPage = new AppShell();
         }
 
         protected override void OnStart()

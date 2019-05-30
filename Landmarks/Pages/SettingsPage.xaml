@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Landmarks.Pages.SettingsPage"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
+             xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit"
+             >
+    <ContentPage.Content>
+        
+        <TableView Intent="Settings" HasUnevenRows="true" Margin="5">
+            <TableRoot>
+                
+                <TableSection Title="Audio" TextColor="Blue">
+                   <ViewCell>
+                      <StackLayout Orientation="Horizontal">
+                          <Label Text="Volume" HorizontalOptions="Start" VerticalOptions="Center" Margin="17,0,0,0" />
+                          <Slider x:Name="SliderVolume" WidthRequest="200" Maximum="100" Minimum="0" HorizontalOptions="EndAndExpand"/>
+                      </StackLayout>
+                    </ViewCell>
+                </TableSection>
+                
+                <TableSection Title="Speech" TextColor="Blue">
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="Locale" HorizontalOptions="Start" VerticalOptions="Center" Margin="17,0,0,0"/>
+                            <Picker x:Name="PickerLocales"  HorizontalOptions="EndAndExpand"/> 
+                        </StackLayout>
+                    </ViewCell>
+                    
+                    <SwitchCell x:Name="SwitchText2Speech" Text="Text-to-Speech">  
+                    </SwitchCell>
+                    
+                </TableSection>
+                
+            </TableRoot>
+        </TableView>
+        
+    </ContentPage.Content>
+</ContentPage>

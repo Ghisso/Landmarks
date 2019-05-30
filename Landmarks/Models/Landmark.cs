@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Landmarks
+namespace Landmarks.Models
 {
     public class Landmark
     {
