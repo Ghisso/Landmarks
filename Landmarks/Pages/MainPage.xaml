@@ -25,6 +25,8 @@
                    PlaceholderColor="Olive"/>
             <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
                    PlaceholderColor="Olive"/>
+            <Entry x:Name="EntryPath" IsReadOnly="true" Placeholder="Path" 
+                   PlaceholderColor="Olive"/>
         </StackLayout>
         
     </ScrollView>

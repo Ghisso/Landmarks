@@ -13,6 +13,7 @@ using Xamarin.Essentials;
 using System.Threading;
 using System.IO;
 using Landmarks.Models;
+using System;
 
 namespace Landmarks.Pages
 {
@@ -128,9 +129,10 @@ namespace Landmarks.Pages
                 Name = "test.jpg",
                 PhotoSize = PhotoSize.Large,
                 CompressionQuality = 92,
-                SaveToAlbum = true
+                SaveMetaData = true
             });
 
+            
             if (file == null)
                 return null;
 
@@ -255,6 +257,7 @@ namespace Landmarks.Pages
             EntryTime.Text = "";
             EntryConfidence.Text = "";
             ImageTaken.Source = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw";
+            EntryPath.Text = FileSystem.AppDataDirectory;
         }
     }
 }
