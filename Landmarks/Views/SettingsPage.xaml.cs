@@ -4,7 +4,7 @@ using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace Landmarks.Pages
+namespace Landmarks.Views
 {
     public partial class SettingsPage : ContentPage
     {

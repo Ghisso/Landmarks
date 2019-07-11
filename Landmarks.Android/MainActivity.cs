@@ -8,7 +8,6 @@ using Android.Widget;
 using Android.OS;
 using Plugin.CurrentActivity;
 using Xamarin.Forms;
-using Landmarks.Pages;
 
 namespace Landmarks.Droid
 {

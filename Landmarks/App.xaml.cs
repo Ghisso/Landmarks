@@ -1,5 +1,5 @@
 ﻿using Xamarin.Forms;
-using Landmarks.Pages;
+using Landmarks.Views;
 
 namespace Landmarks
 {

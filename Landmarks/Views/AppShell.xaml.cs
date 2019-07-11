@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Xamarin.Forms;
 
-namespace Landmarks.Pages
+namespace Landmarks.Views
 {
     public partial class AppShell : Shell
     {

@@ -15,13 +15,15 @@ using System.IO;
 using Landmarks.Models;
 using System;
 
-namespace Landmarks.Pages
+namespace Landmarks.Views
 {
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(true)]
     public partial class MainPage : ContentPage
     {
+        byte[] imageBytes;
+        string filePath;
         CancellationTokenSource cts;
         HttpClient client = new HttpClient();
         IEnumerable<Locale> locales;
@@ -46,6 +48,15 @@ namespace Landmarks.Pages
             }
         }
 
+
+        byte[] ReadFully(Stream input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                input.CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
 
         protected override void OnDisappearing()
         {
@@ -118,6 +129,24 @@ namespace Landmarks.Pages
         }
 
 
+        async void ButtonSaveImageClicked(object sender, System.EventArgs e)
+        {
+            var path = Path.Combine(FileSystem.AppDataDirectory, "SavedImages", landmark.Name.Replace(" ", string.Empty) + ".jpg");
+            if (!Directory.Exists(Path.Combine(FileSystem.AppDataDirectory, "SavedImages")))
+            {
+                Directory.CreateDirectory(Path.Combine(FileSystem.AppDataDirectory, "SavedImages"));
+            }
+
+            File.WriteAllBytes(path, imageBytes);
+            await DisplayAlert("Landmark saved", "This landmark has been saved", "OK");
+        }
+
+
+        void ButtonDeleteImagesClicked(object sender, System.EventArgs e)
+        {
+        }
+
+
         private async Task<Landmark> TakePhotoAndAnalyze(Stopwatch stopwatch)
         {
             ResetUI();
@@ -135,14 +164,14 @@ namespace Landmarks.Pages
             
             if (file == null)
                 return null;
-
+            filePath = file.Path;
+            imageBytes = ReadFully(file.GetStream());
             ImageTaken.Source = ImageSource.FromStream(() =>
             {
                 var stream = file.GetStream();
                 return stream;
             });
             ActivityIndicator.IsRunning = true;
-
 
             stopwatch.Start();
             Stream streamToAnalyze = file.GetStream();
@@ -161,6 +190,8 @@ namespace Landmarks.Pages
             // Need the 2 here or else the image won't appear in the interface (but analysis will be performed) ...
             var fileStream = await response.Content.ReadAsStreamAsync();
             var imageStream = await response.Content.ReadAsStreamAsync();
+
+            imageBytes = ReadFully(fileStream);
             ImageTaken.Source = ImageSource.FromStream(() =>
             {
                 return imageStream;
@@ -188,6 +219,10 @@ namespace Landmarks.Pages
 
             if (file == null)
                 return null;
+
+            filePath = file.Path;
+
+            imageBytes = ReadFully(file.GetStream());
 
             ImageTaken.Source = ImageSource.FromStream(() =>
             {
@@ -234,6 +269,7 @@ namespace Landmarks.Pages
             EntryConfidence.Text = landmark.Confidence.ToString();
             EntryTime.Text = stopwatch.ElapsedMilliseconds.ToString();
             ActivityIndicator.IsRunning = false;
+            EditorPath.Text = filePath;
 
             if (Preferences.Get("Text2Speech", true))
             {
@@ -257,7 +293,8 @@ namespace Landmarks.Pages
             EntryTime.Text = "";
             EntryConfidence.Text = "";
             ImageTaken.Source = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8WfsQJrn2PMrm-YWig7khnLpSwSyjdrnsYzHOPZlJqirdS-NSw";
-            EntryPath.Text = FileSystem.AppDataDirectory;
+
+            EditorPath.Text = filePath;
         }
     }
 }

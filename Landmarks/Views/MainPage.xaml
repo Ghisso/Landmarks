@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Landmarks"
-             x:Class="Landmarks.Pages.MainPage"
+             x:Class="Landmarks.Views.MainPage"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
              Visual="Material">
@@ -17,6 +17,10 @@
                     Text="Take Image"/>
             <Button x:Name="ButtonChooseImage" Clicked="ButtonChooseImageClicked"
                     Text="Choose image from gallery Image"/>
+            <Button x:Name="ButtonSaveImage" Clicked="ButtonSaveImageClicked"
+                    Text="Save image"/>
+            <Button x:Name="ButtonDeleteImages" Clicked="ButtonDeleteImagesClicked"
+                    Text="Delete Images"/>
             <Entry x:Name="EntryLandmarkName" IsReadOnly="true" Placeholder="Landmark"
                    PlaceholderColor="Olive"/>
             <Editor x:Name="EditorLandmarkDescription" IsReadOnly="true" Placeholder="Description"
@@ -25,7 +29,7 @@
                    PlaceholderColor="Olive"/>
             <Entry x:Name="EntryTime" IsReadOnly="true" Placeholder="Excecution Time" 
                    PlaceholderColor="Olive"/>
-            <Entry x:Name="EntryPath" IsReadOnly="true" Placeholder="Path" 
+            <Editor x:Name="EditorPath" IsReadOnly="true" Placeholder="Path" AutoSize="TextChanges"
                    PlaceholderColor="Olive"/>
         </StackLayout>
         
