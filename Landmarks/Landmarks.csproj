@@ -20,9 +20,11 @@
     <PackageReference Include="Xamarin.Forms.InputKit" Version="3.0.12" />
     <PackageReference Include="Xamarin.Forms.Visual.Material" Version="4.1.0.581479" />
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Models\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

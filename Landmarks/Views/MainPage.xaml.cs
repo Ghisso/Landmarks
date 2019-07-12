@@ -13,6 +13,7 @@ using Xamarin.Essentials;
 using System.Threading;
 using System.IO;
 using Landmarks.Models;
+using Landmarks.Services;
 using System;
 
 namespace Landmarks.Views
@@ -25,7 +26,7 @@ namespace Landmarks.Views
         byte[] imageBytes;
         string filePath;
         CancellationTokenSource cts;
-        HttpClient client = new HttpClient();
+        HttpClient client = HttpClientFactory.Create();
         IEnumerable<Locale> locales;
         Landmark landmark = new Landmark();
 
@@ -252,12 +253,18 @@ namespace Landmarks.Views
             if (landmark.Name == "No landmark found")
             {
                 landmark = await LandmarkFinder.AnalyzeImageCustomVisionAPI(ms.ToArray());
-                if (landmark.Confidence < 0.85)
+                if (landmark.Confidence < 0.80)
                 {
-                    landmark.Name = "No landmark found";
+                    landmark.Name = "Unknown";
+                    landmark.Description = "No landmark found";
+                    return landmark;
                 }
             }
-            landmark.Description = string.Concat(Enumerable.Repeat($"Description of {landmark.Name} ", 5));
+            var desc = await new WikipediaQuery(landmark.Name.Replace(" ", "_")).PerformQuery();
+            if (desc == null || desc.Length == 0)
+                landmark.Description = landmark.Name;
+            else
+                landmark.Description = desc;
             return landmark;
         }
 

@@ -9,7 +9,9 @@ namespace Landmarks.Views
 {
     public partial class SavedLandmarksPage : ContentPage
     {
-        List<string> files; 
+        public List<string> files { get; set; }
+
+
         public SavedLandmarksPage()
         {
             InitializeComponent();
@@ -19,7 +21,7 @@ namespace Landmarks.Views
         {
             base.OnAppearing();
             files = Directory.EnumerateFiles(Path.Combine(FileSystem.AppDataDirectory, "SavedImages")).ToList();
-            ViewLandmarks.ItemsSource = files;
+            //ViewLandmarks.ItemsSource = files;
         }
     }
 }

@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Newtonsoft.Json;
+using Landmarks.Models;
 
-namespace Landmarks.Models
+namespace Landmarks.Services
 {
     public static class LandmarkFinder
     {
-        private static readonly HttpClient client = new HttpClient() { };
+        private static readonly HttpClient client = HttpClientFactory.Create();
         private static readonly string customVisionURL = "https://japaneast.api.cognitive.microsoft.com/customvision/v3.0/Prediction/76f0d893-7cda-4625-90ec-8470bd025024/classify/iterations/TestIteration/image";
         private static ApiKeyServiceClientCredentials VisionAPICredentials
         {

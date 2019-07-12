@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Landmarks.Views.SavedLandmarksPage">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Landmarks.Views.SavedLandmarksPage"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
+             Visual="Material">
     <ContentPage.Content>
-        <ListView x:Name="ViewLandmarks" ItemsSource="{Binding files}">
-            <ListView.ItemTemplate>
-              <DataTemplate>
-                    <ImageCell Text="{Binding}" ImageSource="{Binding}" />
-              </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <!--<ListView x:Name="ViewLandmarks" ItemsSource="{Binding files}">
+        </ListView>-->
+        <Label Text="Testing"></Label>
     </ContentPage.Content>
 </ContentPage>
